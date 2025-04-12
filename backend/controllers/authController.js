@@ -1,14 +1,15 @@
 import Donor from "../models/donorModel.js";
-import Reciever from "../models/recieverModel.js";
+import Receiver from "../models/receiverModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import Reciever from "../models/recieverModel.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
 export const registerUser = async (req, res) => {
   const { name, phoneNumber, email, password, role, location } = req.body;
   try {
-    const existingUser = (role === "donor" ? await Donor.findOne({ email }) : await Reciever.findOne({ email }));
+    const existingUser = (role === "donor" ? await Donor.findOne({ email }) : await Receiver.findOne({ email }));
     if (existingUser) return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -17,7 +18,7 @@ export const registerUser = async (req, res) => {
     if (role === "donor") {
       newUser = await Donor.create({ name, phoneNumber, email, password: hashedPassword });
     } else {
-      newUser = await Reciever.create({ name, phoneNumber, email, password: hashedPassword, location });
+      newUser = await Receiver.create({ name, phoneNumber, email, password: hashedPassword, location });
     }
 
     const token = jwt.sign({ id: newUser._id, role }, JWT_SECRET, { expiresIn: "7d" });
@@ -30,7 +31,7 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   const { email, password, role } = req.body;
   try {
-    const user = role === "donor" ? await Donor.findOne({ email }) : await Reciever.findOne({ email });
+    const user = role === "donor" ? await Donor.findOne({ email }) : await Receiver.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
