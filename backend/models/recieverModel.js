@@ -17,8 +17,9 @@ const recieverSchema = new mongoose.Schema({
     required: true,
   },
   location: {
-    lattitude: { type: String, required: true },
-    longitude: { type: String, required: true },
+    address:{ type: String, required: true },
+    lattitude: { type: String},
+    longitude: { type: String},
   },
 });
 
