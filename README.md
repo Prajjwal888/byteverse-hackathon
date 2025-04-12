@@ -48,7 +48,7 @@ This ensures faster pickups, less food spoilage, and optimized distribution.
    ```bash
    # Start backend
     cd backend
-    npm start
+    nodemon index.js
 
     # Start frontend
     cd frontend
