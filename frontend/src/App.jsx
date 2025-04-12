@@ -1,11 +1,10 @@
 import React from 'react';
-import DonorPage from './pages/DonorPage/DonorPage.jsx';
-import AllShow from './pages/DonorPage/AllShow.jsx';
+import LandingPage from './pages/LandingPage/LandingPage'
+import DonorLogin from './pages/AuthPages/DonorLogin';
 function App() {
   return (
     <>
-    {/* DonorPage */}
-      <AllShow/>
+    
     </>
   )
 }
