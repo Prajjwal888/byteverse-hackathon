@@ -2,10 +2,10 @@ import Donor from "../models/donorModel.js";
 import Receiver from "../models/receiverModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import Reciever from "../models/recieverModel.js";
-
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
-
+import dotenv from "dotenv";
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET;
+console.log(JWT_SECRET);
 export const registerUser = async (req, res) => {
   const { name, phoneNumber, email, password, role, location } = req.body;
   try {
