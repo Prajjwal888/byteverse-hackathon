@@ -53,5 +53,9 @@ This ensures faster pickups, less food spoilage, and optimized distribution.
     # Start frontend
     cd frontend
     npm run dev
+    
+    #Start ML Server
+    cd backend/ml
+    python donation_priority.py
 
 
