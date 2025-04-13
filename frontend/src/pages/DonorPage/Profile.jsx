@@ -1,22 +1,68 @@
 import React, { useState } from 'react';
-
+import { useEffect } from 'react';
+import axios from 'axios';
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    address: '123 Main St, City, Country',
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
     preferences: {
-      newsletter: true,
-      taxReceipts: true,
+      newsletter: false,
+      taxReceipts: false,
     },
   });
+  
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+  
+        const response = await axios.get('http://localhost:4000/api/donor/donorProfile', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log(response);
+        const donor = response.data.donor;
+        setProfile({
+          name: donor.name,
+          email: donor.email,
+          phone: donor.phoneNumber,
+          address: donor.address || '',
+          preferences: {
+            newsletter: donor.preferences?.newsletter || false,
+            taxReceipts: donor.preferences?.taxReceipts || false,
+          },
+        });
+      } catch (error) {
+        console.error('Failed to fetch profile:', error.response?.data || error.message);
+      }
+    };
+    fetchProfile();
+  }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsEditing(false);
-    console.log('Profile updated:', profile);
+    try {
+      const token = localStorage.getItem('token');
+      const updateData = {
+        name: profile.name,
+        phoneNumber: profile.phone,
+        password: profile.password,
+      };
+      const response = await axios.post('http://localhost:4000/api/donor/edit-profile', updateData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('Profile updated successfully:', response.data);
+    } catch (error) {
+      console.error('Error updating profile:', error.response?.data || error.message);
+    }
   };
 
   return (

@@ -4,11 +4,11 @@ import Sidebar from './SideBar';
 import DonorPage from './DonorPage';
 import PastActivities from './PastActivities';
 import Profile from './Profile';
-
+import { useNavigate } from 'react-router-dom';
 function AllShow() {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('donate');
-
+  const navigate=useNavigate();
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const menuItems = [
@@ -18,8 +18,9 @@ function AllShow() {
   ];
 
   const handleLogout = () => {
+    if(localStorage.getItem('token')) localStorage.removeItem('token');
+    navigate('/');
     console.log('User logged out');
-    // Add actual logout logic here (like clearing tokens or redirecting)
   };
 
   const renderContent = () => {

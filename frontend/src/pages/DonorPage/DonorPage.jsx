@@ -1,17 +1,46 @@
 import React, { useState } from 'react';
-
+import axios from 'axios';
 const DonorPage = () => {
   const [formData, setFormData] = useState({
-    foodType: 'cooked',
+    foodType: 'Cooked',
     people: '',
     location: '',
     expiry: '',
     image: null,
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Donation submitted:', formData);
+  
+    try {
+      const token = localStorage.getItem('token');
+      const payload = {
+        foodType: formData.foodType,
+        approxPeople: formData.people,
+        location: formData.location,
+        expiryTime: formData.expiry,
+        imageUrl: formData.image||" ",
+      };
+  
+      const res = await axios.post('http://localhost:4000/api/donor/donor-request', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      console.log('Donation submitted:', res.data);
+      alert('Donation request created successfully!');
+      setFormData({
+        foodType: 'Cooked',
+        people: '',
+        location: '',
+        expiry: '',
+        image: null,
+      });
+    } catch (error) {
+      console.error('Error submitting donation:', error);
+      alert('Failed to submit donation request. Please try again.');
+    }
   };
 
   return (
@@ -29,9 +58,9 @@ const DonorPage = () => {
             onChange={(e) => setFormData({ ...formData, foodType: e.target.value })}
             className="w-full rounded-lg border-2 border-green-200 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
           >
-            <option value="cooked">Cooked</option>
-            <option value="dry">Dry</option>
-            <option value="fresh">Fresh</option>
+            <option value="Cooked">Cooked</option>
+            <option value="Dry">Dry</option>
+            <option value="Fresh">Fresh</option>
           </select>
         </div>
 

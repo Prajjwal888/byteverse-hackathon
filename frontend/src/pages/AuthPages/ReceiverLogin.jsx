@@ -1,24 +1,37 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Gift, Mail, Lock, ArrowLeft } from 'lucide-react';
-
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Gift, Mail, Lock, ArrowLeft } from "lucide-react";
+import axios from 'axios'
 function ReceiverLogin() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotEmail, setForgotEmail] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Add login logic here
-    console.log('Login attempted with:', email, password);
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/auth/login",
+        {
+          email,
+          password,
+          role: "receiver",
+        }
+      );
+      console.log("Login successful:", response.data);
+      localStorage.setItem("token", response.data.token);
+      navigate("/receiverDashboard");
+    } catch (error) {
+      console.error("Login failed:", error.response?.data || error.message);
+    }
   };
 
   const handleForgotPassword = (e) => {
     e.preventDefault();
     // Add forgot password logic here
-    console.log('Password reset requested for:', forgotEmail);
+    console.log("Password reset requested for:", forgotEmail);
     setShowForgotPassword(false);
   };
 
@@ -32,10 +45,15 @@ function ReceiverLogin() {
 
         {!showForgotPassword ? (
           <>
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Welcome back</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">
+              Welcome back
+            </h2>
             <form onSubmit={handleLogin} className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Email address
                 </label>
                 <div className="relative">
@@ -52,7 +70,10 @@ function ReceiverLogin() {
                 </div>
               </div>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Password
                 </label>
                 <div className="relative">
@@ -83,8 +104,11 @@ function ReceiverLogin() {
               </button>
             </form>
             <p className="mt-4 text-center text-sm text-gray-600">
-              First time here?{' '}
-              <button onClick={() => navigate('/register')} className="text-green-600 hover:text-green-500 font-medium">
+              First time here?{" "}
+              <button
+                onClick={() => navigate("/receiverRegister")}
+                className="text-green-600 hover:text-green-500 font-medium"
+              >
                 Create an account
               </button>
             </p>
@@ -100,13 +124,19 @@ function ReceiverLogin() {
                 <span className="ml-1">Back to login</span>
               </button>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Reset your password</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Reset your password
+            </h2>
             <p className="text-gray-600 mb-8">
-              Enter your email address and we'll send you instructions to reset your password.
+              Enter your email address and we'll send you instructions to reset
+              your password.
             </p>
             <form onSubmit={handleForgotPassword} className="space-y-6">
               <div>
-                <label htmlFor="forgot-email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="forgot-email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Email address
                 </label>
                 <div className="relative">
