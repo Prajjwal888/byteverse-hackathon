@@ -83,7 +83,7 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem("token"); // Assuming token is stored here
         const reqRes = await axios.get(
-          "http://localhost:4000/api/receiver/total-requests",
+          "https://food-share-zv84.onrender.com/api/receiver/total-requests",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -91,7 +91,7 @@ const Dashboard = () => {
           }
         );
         const donorRes = await axios.get(
-          "http://localhost:4000/api/receiver/total-donors",
+          "https://food-share-zv84.onrender.com/api/receiver/total-donors",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -99,7 +99,7 @@ const Dashboard = () => {
           }
         );
 
-        // const profileRes = await axios.get('http://localhost:4000/api/receiver/profile', {
+        // const profileRes = await axios.get('https://food-share-zv84.onrender.com/api/receiver/profile', {
         //   headers: {
         //     Authorization: `Bearer ${token}`
         //   }
@@ -138,7 +138,7 @@ const Requests = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:4000/api/receiver/requests",
+          "https://food-share-zv84.onrender.com/api/receiver/requests",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -161,7 +161,7 @@ const Requests = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `http://localhost:4000/api/receiver/accept-request/${requestId}`,
+        `https://food-share-zv84.onrender.com/api/receiver/accept-request/${requestId}`,
         {},
         {
           headers: {
@@ -401,7 +401,7 @@ const PickupHistory = () => {
       try {
         const token = localStorage.getItem("token"); // Assuming token is stored here
         const response = await axios.get(
-          "http://localhost:4000/api/receiver/pickup-history",
+          "https://food-share-zv84.onrender.com/api/receiver/pickup-history",
           {
             headers: {
               Authorization: `Bearer ${token}`,

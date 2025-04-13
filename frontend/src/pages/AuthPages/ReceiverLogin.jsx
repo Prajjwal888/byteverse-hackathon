@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Gift, Mail, Lock, ArrowLeft } from "lucide-react";
-import axios from 'axios'
+import axios from "axios";
 function ReceiverLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -13,7 +13,7 @@ function ReceiverLogin() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/auth/login",
+        "https://food-share-zv84.onrender.com/api/auth/login",
         {
           email,
           password,

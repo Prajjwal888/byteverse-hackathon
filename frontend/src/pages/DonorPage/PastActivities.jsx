@@ -11,11 +11,14 @@ export default function PastActivities() {
     const fetchDonorRequests = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:4000/api/donor/donor-requests", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await axios.get(
+          "https://food-share-zv84.onrender.com/api/donor/donor-requests",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         setDonations(res.data);
       } catch (error) {
@@ -28,7 +31,10 @@ export default function PastActivities() {
     fetchDonorRequests();
   }, []);
   console.log(donations);
-  const totalPeopleHelped = donations.reduce((sum, d) => sum + d.approxPeople, 0);
+  const totalPeopleHelped = donations.reduce(
+    (sum, d) => sum + d.approxPeople,
+    0
+  );
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
@@ -64,7 +70,9 @@ export default function PastActivities() {
       {loading ? (
         <div className="text-center text-gray-500">Loading...</div>
       ) : donations.length === 0 ? (
-        <div className="text-center text-gray-500">No past donations found.</div>
+        <div className="text-center text-gray-500">
+          No past donations found.
+        </div>
       ) : (
         <div className="grid gap-6">
           {donations.map((donation, index) => (
@@ -89,13 +97,18 @@ export default function PastActivities() {
               <div className="flex items-center text-gray-500 gap-2 text-sm">
                 <Users className="w-4 h-4" />
                 Helped approx.{" "}
-                <span className="text-primary font-medium">{donation.approxPeople}</span> people
+                <span className="text-primary font-medium">
+                  {donation.approxPeople}
+                </span>{" "}
+                people
               </div>
 
               <div className="flex items-center text-gray-500 gap-2 text-sm">
                 <MapPin className="w-4 h-4" />
                 Pickup Location:{" "}
-                <span className="text-primary font-medium">{donation.location?.address}</span>
+                <span className="text-primary font-medium">
+                  {donation.location?.address}
+                </span>
               </div>
             </motion.div>
           ))}

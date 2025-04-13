@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Gift, Mail, Lock, Phone, User, Crown } from "lucide-react";
-import axios from 'axios'
+import axios from "axios";
 function DonorRegister() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -13,7 +13,7 @@ function DonorRegister() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/auth/register",
+        "https://food-share-zv84.onrender.com/api/auth/register",
         {
           name,
           phoneNumber: phone,

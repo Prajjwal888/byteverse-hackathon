@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Phone, User, Crown, MapPin } from "lucide-react";
-import axios from 'axios';
+import axios from "axios";
 function ReceiverRegister() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -10,24 +10,30 @@ function ReceiverRegister() {
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
 
-const handleRegister = async (e) => {
-  e.preventDefault();
+  const handleRegister = async (e) => {
+    e.preventDefault();
 
-  try {
-    const response = await axios.post("http://localhost:4000/api/auth/register", {
-      name,
-      phoneNumber: phone,
-      email,
-      password,
-      location: address,
-      role: "receiver"
-    });
-    console.log("Registration successful:", response.data);
-    navigate("/receiverLogin");
-  } catch (error) {
-    console.error("Registration failed:", error.response?.data || error.message);
-  }
-};
+    try {
+      const response = await axios.post(
+        "https://food-share-zv84.onrender.com/api/auth/register",
+        {
+          name,
+          phoneNumber: phone,
+          email,
+          password,
+          location: address,
+          role: "receiver",
+        }
+      );
+      console.log("Registration successful:", response.data);
+      navigate("/receiverLogin");
+    } catch (error) {
+      console.error(
+        "Registration failed:",
+        error.response?.data || error.message
+      );
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-r from-green-600 to-green-700 flex items-center justify-center px-4">
       <div className="max-w-2xl w-full bg-white rounded-2xl shadow-lg p-10">

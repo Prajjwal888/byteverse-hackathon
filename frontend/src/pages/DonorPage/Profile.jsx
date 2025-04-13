@@ -1,43 +1,49 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import { useEffect } from "react";
+import axios from "axios";
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
     preferences: {
       newsletter: false,
       taxReceipts: false,
     },
   });
-  
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
-  
-        const response = await axios.get('http://localhost:4000/api/donor/donorProfile', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const token = localStorage.getItem("token");
+
+        const response = await axios.get(
+          "https://food-share-zv84.onrender.com/api/donor/donorProfile",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         console.log(response);
         const donor = response.data.donor;
         setProfile({
           name: donor.name,
           email: donor.email,
           phone: donor.phoneNumber,
-          address: donor.address || '',
+          address: donor.address || "",
           preferences: {
             newsletter: donor.preferences?.newsletter || false,
             taxReceipts: donor.preferences?.taxReceipts || false,
           },
         });
       } catch (error) {
-        console.error('Failed to fetch profile:', error.response?.data || error.message);
+        console.error(
+          "Failed to fetch profile:",
+          error.response?.data || error.message
+        );
       }
     };
     fetchProfile();
@@ -47,21 +53,28 @@ const Profile = () => {
     e.preventDefault();
     setIsEditing(false);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const updateData = {
         name: profile.name,
         phoneNumber: profile.phone,
         password: profile.password,
       };
-      const response = await axios.post('http://localhost:4000/api/donor/edit-profile', updateData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.post(
+        "https://food-share-zv84.onrender.com/api/donor/edit-profile",
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      console.log('Profile updated successfully:', response.data);
+      console.log("Profile updated successfully:", response.data);
     } catch (error) {
-      console.error('Error updating profile:', error.response?.data || error.message);
+      console.error(
+        "Error updating profile:",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -125,7 +138,9 @@ const Profile = () => {
           </label>
           <textarea
             value={profile.address}
-            onChange={(e) => setProfile({ ...profile, address: e.target.value })}
+            onChange={(e) =>
+              setProfile({ ...profile, address: e.target.value })
+            }
             disabled={!isEditing}
             rows={3}
             className="w-full rounded-lg border-2 border-green-200 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent disabled:bg-green-50"
@@ -142,7 +157,10 @@ const Profile = () => {
               onChange={(e) =>
                 setProfile({
                   ...profile,
-                  preferences: { ...profile.preferences, newsletter: e.target.checked },
+                  preferences: {
+                    ...profile.preferences,
+                    newsletter: e.target.checked,
+                  },
                 })
               }
               disabled={!isEditing}
@@ -160,13 +178,19 @@ const Profile = () => {
               onChange={(e) =>
                 setProfile({
                   ...profile,
-                  preferences: { ...profile.preferences, taxReceipts: e.target.checked },
+                  preferences: {
+                    ...profile.preferences,
+                    taxReceipts: e.target.checked,
+                  },
                 })
               }
               disabled={!isEditing}
               className="h-5 w-5 text-green-600 focus:ring-2 focus:ring-green-500 border-green-300 rounded"
             />
-            <label htmlFor="taxReceipts" className="ml-3 text-sm text-green-800">
+            <label
+              htmlFor="taxReceipts"
+              className="ml-3 text-sm text-green-800"
+            >
               Receive tax receipts
             </label>
           </div>

@@ -1,45 +1,49 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 const DonorPage = () => {
   const [formData, setFormData] = useState({
-    foodType: 'Cooked',
-    people: '',
-    location: '',
-    expiry: '',
+    foodType: "Cooked",
+    people: "",
+    location: "",
+    expiry: "",
     image: null,
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const payload = {
         foodType: formData.foodType,
         approxPeople: formData.people,
         location: formData.location,
         expiryTime: formData.expiry,
-        imageUrl: formData.image||" ",
+        imageUrl: formData.image || " ",
       };
-  
-      const res = await axios.post('http://localhost:4000/api/donor/donor-request', payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      console.log('Donation submitted:', res.data);
-      alert('Donation request created successfully!');
+
+      const res = await axios.post(
+        "https://food-share-zv84.onrender.com/api/donor/donor-request",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Donation submitted:", res.data);
+      alert("Donation request created successfully!");
       setFormData({
-        foodType: 'Cooked',
-        people: '',
-        location: '',
-        expiry: '',
+        foodType: "Cooked",
+        people: "",
+        location: "",
+        expiry: "",
         image: null,
       });
     } catch (error) {
-      console.error('Error submitting donation:', error);
-      alert('Failed to submit donation request. Please try again.');
+      console.error("Error submitting donation:", error);
+      alert("Failed to submit donation request. Please try again.");
     }
   };
 
@@ -47,7 +51,6 @@ const DonorPage = () => {
     <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-xl p-8">
       <h2 className="text-3xl font-bold text-green-900 mb-8">Donate Food</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
-        
         {/* Food Type */}
         <div>
           <label className="block text-sm font-semibold text-green-800 mb-2">
@@ -55,7 +58,9 @@ const DonorPage = () => {
           </label>
           <select
             value={formData.foodType}
-            onChange={(e) => setFormData({ ...formData, foodType: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, foodType: e.target.value })
+            }
             className="w-full rounded-lg border-2 border-green-200 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
           >
             <option value="Cooked">Cooked</option>
@@ -72,7 +77,9 @@ const DonorPage = () => {
           <input
             type="number"
             value={formData.people}
-            onChange={(e) => setFormData({ ...formData, people: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, people: e.target.value })
+            }
             className="w-full rounded-lg border-2 border-green-200 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
             placeholder="e.g. 50"
             required
@@ -87,7 +94,9 @@ const DonorPage = () => {
           <input
             type="text"
             value={formData.location}
-            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, location: e.target.value })
+            }
             className="w-full rounded-lg border-2 border-green-200 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
             placeholder="Enter pickup/drop location"
             required
@@ -102,7 +111,9 @@ const DonorPage = () => {
           <input
             type="datetime-local"
             value={formData.expiry}
-            onChange={(e) => setFormData({ ...formData, expiry: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, expiry: e.target.value })
+            }
             className="w-full rounded-lg border-2 border-green-200 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
             required
           />
@@ -116,7 +127,9 @@ const DonorPage = () => {
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
+            onChange={(e) =>
+              setFormData({ ...formData, image: e.target.files[0] })
+            }
             className="w-full rounded-lg border-2 border-green-200 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent bg-white"
           />
         </div>
