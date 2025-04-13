@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, X, DollarSign, History, UserCog, LogOut } from 'lucide-react';
-import Sidebar from './SideBar';
+import Sidebar from './Sidebar';
 import DonorPage from './DonorPage';
 import PastActivities from './PastActivities';
 import Profile from './Profile';
