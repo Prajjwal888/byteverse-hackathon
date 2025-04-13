@@ -70,7 +70,7 @@ export const donorRequest = async (req, res) => {
     }
 
     const mlResponse = await axios.post(
-      "https://food-share-ml.onrender.com",
+      "https://food-share-ml.onrender.com/predict-urgency",
       {
         food_type: foodType,
         quantity: approxPeople,
