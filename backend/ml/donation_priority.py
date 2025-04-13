@@ -89,7 +89,11 @@ def match_ngos(donor_location, urgency_score):
                 "match_score": round(match_score, 2)
             })
     return sorted(matches, key=lambda x: x["match_score"], reverse=True)
-
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({
+        "message": "API is running! Use /predict-urgency (POST) to get predictions."
+    })
 @app.route("/predict-urgency", methods=["POST"])
 def predict():
     try:
@@ -110,4 +114,4 @@ def predict():
         return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=10000)
