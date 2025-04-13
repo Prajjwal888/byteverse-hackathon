@@ -1,65 +1,68 @@
 import Request from "../models/requestModel.js";
-import Donor from '../models/donorModel.js';
+import Donor from "../models/donorModel.js";
 import Pickup from "../models/pickupModel.js";
 import Receiver from "../models/receiverModel.js";
 
 export const getTotalRequests = async (req, res) => {
-    try {
-      const receiverId = req.user.id; // assuming auth middleware sets req.user
-  
-      const totalRequests = await Pickup.countDocuments({ receiver: receiverId });
-  
-      res.status(200).json({ totalRequests });
-    } catch (error) {
-      console.error("Error fetching total requests:", error);
-      res.status(500).json({ message: 'Failed to fetch total requests' });
-    }
-  };
-  export const getTotalDonors = async (req, res) => {
-    try {
-      const receiverId = req.user.id;
-  
-      const uniqueDonors = await Pickup.distinct('donor', { receiver: receiverId });
-  
-      res.status(200).json({ totalDonors: uniqueDonors.length });
-    } catch (error) {
-      console.error("Error fetching total donors:", error);
-      res.status(500).json({ error: "Error while fetching the donors" });
-    }
-  };
+  try {
+    const receiverId = req.user.id; // assuming auth middleware sets req.user
 
+    const totalRequests = await Pickup.countDocuments({ receiver: receiverId });
 
-  export const getAllRequests = async (req, res) => {
-    try {
-      const receiverId = req.user.id; // assuming req.user is set via auth middleware
-        // console.log(receiverId);
-      // Find receiver and populate their request documents
-      const receiver = await Receiver.findById(receiverId).populate({
-        path: "requests",
-        populate: {
-          path: "donor",
-          select: "name"
-        }
-      });
-  
-      if (!receiver) {
-        return res.status(404).json({ success: false, message: "Receiver not found" });
-      }
-  
-      res.status(200).json({
-        success: true,
-        message: "Requests fetched successfully",
-        data: receiver.requests,
-      });
-    } catch (error) {
-      console.error("Error fetching requests:", error);
-      res.status(500).json({
-        success: false,
-        message: "Failed to fetch requests",
-        error: error.message,
-      });
+    res.status(200).json({ totalRequests });
+  } catch (error) {
+    console.error("Error fetching total requests:", error);
+    res.status(500).json({ message: "Failed to fetch total requests" });
+  }
+};
+export const getTotalDonors = async (req, res) => {
+  try {
+    const receiverId = req.user.id;
+
+    const uniqueDonors = await Pickup.distinct("donor", {
+      receiver: receiverId,
+    });
+
+    res.status(200).json({ totalDonors: uniqueDonors.length });
+  } catch (error) {
+    console.error("Error fetching total donors:", error);
+    res.status(500).json({ error: "Error while fetching the donors" });
+  }
+};
+
+export const getAllRequests = async (req, res) => {
+  try {
+    const receiverId = req.user.id; // assuming req.user is set via auth middleware
+    // console.log(receiverId);
+    // Find receiver and populate their request documents
+    const receiver = await Receiver.findById(receiverId).populate({
+      path: "requests",
+      populate: {
+        path: "donor",
+        select: "name",
+      },
+    });
+
+    if (!receiver) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Receiver not found" });
     }
-  };
+
+    res.status(200).json({
+      success: true,
+      message: "Requests fetched successfully",
+      data: receiver.requests,
+    });
+  } catch (error) {
+    console.error("Error fetching requests:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch requests",
+      error: error.message,
+    });
+  }
+};
 
 export const acceptRequest = async (req, res) => {
   try {
@@ -71,18 +74,27 @@ export const acceptRequest = async (req, res) => {
       path: "requests",
       populate: {
         path: "donor",
-        model: "Donor"
-      }
+        model: "Donor",
+      },
     });
 
     if (!receiver) {
-      return res.status(404).json({ success: false, message: "Receiver not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Receiver not found" });
     }
 
     // 2. Find the request in receiver's list
-    const request = receiver.requests.find(req => req._id.toString() === requestId);
+    const request = receiver.requests.find(
+      (req) => req._id.toString() === requestId
+    );
     if (!request) {
-      return res.status(403).json({ success: false, message: "Request not found in receiver's list" });
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Request not found in receiver's list",
+        });
     }
 
     // 3. Update request status to "picked up"
@@ -105,7 +117,9 @@ export const acceptRequest = async (req, res) => {
     await newPickup.save();
 
     // 5. (Optional) Remove from receiver's pending requests
-    receiver.requests = receiver.requests.filter(req => req._id.toString() !== requestId);
+    receiver.requests = receiver.requests.filter(
+      (req) => req._id.toString() !== requestId
+    );
     await receiver.save();
 
     res.status(201).json({
@@ -114,13 +128,11 @@ export const acceptRequest = async (req, res) => {
       pickup: newPickup,
       updatedRequest,
     });
-
   } catch (error) {
     console.error("Error in acceptRequest:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
 
 export const getPickupHistory = async (req, res) => {
   try {
@@ -128,15 +140,14 @@ export const getPickupHistory = async (req, res) => {
 
     // 1. Fetch all pickups done by this receiver
     const pickups = await Pickup.find({ receiver: receiverId })
-      .populate("donor", "name email")        // Optional: populate donor info
-      .populate("request");                   // Optional: populate full request info
+      .populate("donor", "name email") // Optional: populate donor info
+      .populate("request"); // Optional: populate full request info
 
     res.status(200).json({
       success: true,
       message: "Pickup history fetched successfully",
       pickups, // array of all pickup objects
     });
-
   } catch (error) {
     console.error("Error in getPickupHistory:", error);
     res.status(500).json({

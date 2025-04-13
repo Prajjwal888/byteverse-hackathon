@@ -12,9 +12,9 @@ app.use(cors());
 app.use(express.json());
 connectDb();
 
-app.use("/api/auth",authRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/donor", donorRouter);
-app.use("/api/receiver",receiverRouter)
+app.use("/api/receiver", receiverRouter);
 app.listen(PORT, () => {
   console.log(`Serving on port :${PORT}`);
 });

@@ -16,8 +16,8 @@ function App() {
         <Route path="/receiverLogin" element={<ReceiverLogin />} />
         <Route path="/donorRegister" element={<DonorRegister />} />
         <Route path="/receiverRegister" element={<ReceiverRegister />} />
-        <Route path="/donorDashboard" element= {<AllShow />} />
-        <Route path="/receiverDashboard" element={<ReceiverDashbaord/>} />
+        <Route path="/donorDashboard" element={<AllShow />} />
+        <Route path="/receiverDashboard" element={<ReceiverDashbaord />} />
       </Routes>
     </>
   );

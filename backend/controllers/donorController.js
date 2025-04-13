@@ -56,7 +56,9 @@ export const donorRequest = async (req, res) => {
 
     if (!lat || !lon) {
       const geoRes = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location.address)}`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          location.address
+        )}`
       );
       const geoData = await geoRes.json();
       if (geoData.length > 0) {
@@ -67,15 +69,18 @@ export const donorRequest = async (req, res) => {
       }
     }
 
-    const mlResponse = await axios.post("http://127.0.0.1:5000/predict-urgency", {
-      food_type: foodType,
-      quantity: approxPeople,
-      expiry_time: expiryTime,
-      location: {
-        lat,
-        lon,
-      },
-    });
+    const mlResponse = await axios.post(
+      "http://127.0.0.1:5000/predict-urgency",
+      {
+        food_type: foodType,
+        quantity: approxPeople,
+        expiry_time: expiryTime,
+        location: {
+          lat,
+          lon,
+        },
+      }
+    );
 
     const { urgency_score, matched_ngos } = mlResponse.data;
 
