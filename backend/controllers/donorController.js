@@ -115,10 +115,31 @@ export const donorRequest = async (req, res) => {
       urgency_score,
       matched_ngos: top3,
     });
-  } catch (error) {
-    console.error("Error creating request:", error);
-    res.status(500).json({ message: "Server error", error: error });
+  } 
+  catch (error) {
+  console.error("Error creating request:", error);
+  if (error.response) {
+    res.status(500).json({
+      message: "ML service error",
+      status: error.response.status,
+      data: error.response.data,
+    });
+  } else if (error.request) {
+    res.status(500).json({
+      message: "No response from ML service",
+      request: error.request,
+    });
+  } else {
+    res.status(500).json({
+      message: "Server error",
+      error: {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      },
+    });
   }
+}
 }; 
 export const getDonorRequests = async (req, res) => {
   const { id } = req.user;
