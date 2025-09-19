@@ -78,7 +78,7 @@ export const donorRequest = async (req, res) => {
         },
       }
     );
-
+    console.log("ML raw response:", mlResponse.data);
     const { urgency_score, matched_ngos } = mlResponse.data;
 
     const newRequest = new Request({
