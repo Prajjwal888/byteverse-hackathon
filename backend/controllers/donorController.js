@@ -67,7 +67,7 @@ export const donorRequest = async (req, res) => {
     // console.log(lon)
 
     const mlResponse = await axios.post(
-      "http://127.0.0.1:10000/predict-urgency",
+      "https://food-share-ml.onrender.com/predict-urgency",
       {
         food_type: foodType,
         quantity: approxPeople,
