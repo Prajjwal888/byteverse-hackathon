@@ -63,29 +63,64 @@ export const donorRequest = async (req, res) => {
         throw new Error("Could not geocode address to lat/lon");
       }
     }
-    console.log(lat)
-    console.log(lon)
+
+    console.log("Coordinates:", { lat, lon });
+
+    let mlResponse;
     try {
-    const mlResponse = await axios.post(
-      "https://food-share-ml.onrender.com/predict-urgency",
-      {
+      const mlServiceUrl = "https://food-share-ml.onrender.com/predict-urgency";
+      const requestData = {
         food_type: foodType,
         quantity: approxPeople,
         expiry_time: expiryTime,
         location: {
-          lat,
-          lon,
+          lat: parseFloat(lat),
+          lon: parseFloat(lon),
         },
-      }
-    );
-    console.log("ML raw response:", mlResponse.data);  
-    } catch (error) {
-    console.error("Error in ML Response:", error);
-    res.status(500).json({ message: "Error in ML Response",error });
-    }
-    
-    const { urgency_score, matched_ngos } = mlResponse.data;
+      };
 
+      console.log("Sending to ML service:", requestData);
+
+      mlResponse = await axios.post(mlServiceUrl, requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        timeout: 30000,
+      });
+      console.log("ML service response status:", mlResponse.status);
+      console.log("ML service response data:", mlResponse.data);
+    } catch (mlError) {
+      console.error("ML Service Error Details:", {
+        message: mlError.message,
+        status: mlError.response?.status,
+        statusText: mlError.response?.statusText,
+        data: mlError.response?.data,
+        url: mlError.config?.url,
+      });
+
+      if (mlError.response?.data && typeof mlError.response.data === 'string' && 
+          mlError.response.data.includes('<html>')) {
+        console.error("ML service returned HTML instead of JSON - service might be down or misconfigured");
+      }
+      return res.status(500).json({
+        message: "ML service unavailable",
+        error: {
+          service: "ML prediction service",
+          status: mlError.response?.status || 'No response',
+          details: mlError.message,
+        },
+        suggestion: "Please try again later or contact support"
+      });
+    }
+    const { urgency_score, matched_ngos } = mlResponse.data;
+    if (!matched_ngos || !Array.isArray(matched_ngos)) {
+      console.error("Invalid ML response format:", mlResponse.data);
+      return res.status(500).json({
+        message: "Invalid response format from ML service",
+        error: "Expected matched_ngos array"
+      });
+    }
     const newRequest = new Request({
       donor: req.user.id,
       foodType,
@@ -103,14 +138,22 @@ export const donorRequest = async (req, res) => {
     await newRequest.save();
 
     const top3 = matched_ngos.slice(0, 3);
+    const assignedNgos = [];
 
     for (const ngo of top3) {
-      const dbNgo = await Receiver.findOne({ name: ngo.name });
-      if (dbNgo) {
-        if (!dbNgo.requests) dbNgo.requests = [];
-        dbNgo.requests.push(newRequest._id);
-        await dbNgo.save();
-        console.log(`Request assigned to: ${dbNgo.name}`);
+      try {
+        const dbNgo = await Receiver.findOne({ name: ngo.name });
+        if (dbNgo) {
+          if (!dbNgo.requests) dbNgo.requests = [];
+          dbNgo.requests.push(newRequest._id);
+          await dbNgo.save();
+          assignedNgos.push(dbNgo.name);
+          console.log(`Request assigned to: ${dbNgo.name}`);
+        } else {
+          console.warn(`NGO not found in database: ${ngo.name}`);
+        }
+      } catch (ngoError) {
+        console.error(`Error assigning to NGO ${ngo.name}:`, ngoError);
       }
     }
 
@@ -119,33 +162,21 @@ export const donorRequest = async (req, res) => {
       request: newRequest,
       urgency_score,
       matched_ngos: top3,
+      assigned_ngos: assignedNgos,
     });
-  } 
-  catch (error) {
-  console.error("Error creating request:", error);
-  if (error.response) {
-    res.status(500).json({
-      message: "ML service error",
-      status: error.response.status,
-      data: error.response.data,
-    });
-  } else if (error.request) {
-    res.status(500).json({
-      message: "No response from ML service",
-      request: error.request,
-    });
-  } else {
+
+  } catch (error) {
+    console.error("Error creating request:", error);
+    
     res.status(500).json({
       message: "Server error",
       error: {
         name: error.name,
         message: error.message,
-        stack: error.stack,
       },
     });
   }
-}
-}; 
+};
 export const getDonorRequests = async (req, res) => {
   const { id } = req.user;
   try {
