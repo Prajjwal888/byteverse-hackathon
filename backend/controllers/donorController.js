@@ -63,9 +63,9 @@ export const donorRequest = async (req, res) => {
         throw new Error("Could not geocode address to lat/lon");
       }
     }
-    // console.log(lat)
-    // console.log(lon)
-
+    console.log(lat)
+    console.log(lon)
+    try {
     const mlResponse = await axios.post(
       "https://food-share-ml.onrender.com/predict-urgency",
       {
@@ -78,7 +78,12 @@ export const donorRequest = async (req, res) => {
         },
       }
     );
-    console.log("ML raw response:", mlResponse.data);
+    console.log("ML raw response:", mlResponse.data);  
+    } catch (error) {
+    console.error("Error in ML Response:", error);
+    res.status(500).json({ message: "Error in ML Response",error });
+    }
+    
     const { urgency_score, matched_ngos } = mlResponse.data;
 
     const newRequest = new Request({
