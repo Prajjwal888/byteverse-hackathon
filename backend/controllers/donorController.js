@@ -14,19 +14,14 @@ export const editDonorProfile = async (req, res) => {
     if (!donor) {
       return res.status(404).json({ message: "Donor not found" });
     }
-
-    // Update only fields present in the body
     if (req.body.name) donor.name = req.body.name;
     if (req.body.phoneNumber) donor.phoneNumber = req.body.phoneNumber;
-    //   if (req.body.email) donor.email = req.body.email;
 
-    // If password is provided, hash and update it
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);
       donor.password = await bcrypt.hash(req.body.password, salt);
     }
 
-    // Save updated donor
     const updatedDonor = await donor.save();
 
     res.status(200).json({
