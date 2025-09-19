@@ -68,9 +68,11 @@ export const donorRequest = async (req, res) => {
         throw new Error("Could not geocode address to lat/lon");
       }
     }
+    // console.log(lat)
+    // console.log(lon)
 
     const mlResponse = await axios.post(
-      "https://food-share-ml.onrender.com/predict-urgency",
+      "http://127.0.0.1:10000/predict-urgency",
       {
         food_type: foodType,
         quantity: approxPeople,
@@ -119,11 +121,10 @@ export const donorRequest = async (req, res) => {
       matched_ngos: top3,
     });
   } catch (error) {
-    console.error("Error creating request:", error.message);
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("Error creating request:", error);
+    res.status(500).json({ message: "Server error", error: error });
   }
-};
-
+}; 
 export const getDonorRequests = async (req, res) => {
   const { id } = req.user;
   try {
