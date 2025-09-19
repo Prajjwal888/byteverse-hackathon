@@ -48,13 +48,14 @@ export const donorRequest = async (req, res) => {
 
     let lat = latitude;
     let lon = longitude;
-
+    console.log(lat);
     if (!lat || !lon) {
       const geoRes = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
           location.address
         )}`
       );
+      console.log(geoRes);
       const geoData = await geoRes.json();
       if (geoData.length > 0) {
         lat = geoData[0].lat;
